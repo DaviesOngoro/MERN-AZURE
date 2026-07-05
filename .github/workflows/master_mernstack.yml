@@ -1,48 +1,37 @@
-# Docs for the Azure Web Apps Deploy action:
-# https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure:
-# https://github.com/Azure/actions
-
 name: Build and deploy Node.js app to Azure Web App - MernStack
 
 on:
   push:
     branches:
-      - master
+      - main
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
 
     steps:
-      - name: Checkout repository
+      - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Set up Node.js version
+      - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '22.x'
 
-      # Install dependencies inside server folder
-      - name: Install dependencies (server)
+      - name: Install dependencies
         working-directory: ./server
         run: npm install
 
-      # Optional build step (only runs if you have build script)
-      - name: Build app (server)
+      - name: Build app
         working-directory: ./server
         run: npm run build --if-present
 
-      # Optional test step
-      - name: Test app (server)
+      - name: Test app
         working-directory: ./server
         run: npm run test --if-present
 
-      # Package ONLY server folder (important fix)
-      - name: Upload artifact for deployment job
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: node-app
@@ -53,16 +42,14 @@ jobs:
     needs: build
 
     steps:
-      - name: Download artifact from build job
+      - name: Download artifact
         uses: actions/download-artifact@v4
         with:
           name: node-app
 
-      - name: Deploy to Azure Web App
-        id: deploy-to-webapp
+      - name: Deploy to Azure
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'MernStack'
-          slot-name: 'Production'
           package: ./server
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_41C2DAB4E9A24496999E5EA7BBF597D2 }}
