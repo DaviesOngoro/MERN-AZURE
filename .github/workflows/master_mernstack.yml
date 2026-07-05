@@ -35,7 +35,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: node-app
-          path: ./server
+          path: server   # ✅ FIXED (no ./)
 
   deploy:
     runs-on: ubuntu-latest
@@ -51,5 +51,5 @@ jobs:
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'MernStack'
-          package: ./server
+          package: node-app   # ✅ FIXED (this is the key fix)
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_41C2DAB4E9A24496999E5EA7BBF597D2 }}
